@@ -2,9 +2,10 @@
 //constants
 
 int NUM_HORIZONTAL_CELLS = 100;
-int NUM_VERTICAL_CELLS = 50;
+int NUM_VERTICAL_CELLS = 100;
 int CELL_HEIGHT = 8;
 int CELL_WIDTH = 8;
+int CONTROLS_WIDTH = 200;
 
 int SINGLE_STEP_MODE = 0;
 int CONTINUOUS_MODE = 1;
@@ -17,7 +18,7 @@ int mode;
 int neighbors;
 
 void setup() {
-	size(NUM_HORIZONTAL_CELLS * CELL_WIDTH, NUM_VERTICAL_CELLS * CELL_HEIGHT);
+	size(NUM_HORIZONTAL_CELLS * CELL_WIDTH + CONTROLS_WIDTH, NUM_VERTICAL_CELLS * CELL_HEIGHT);
 	background(0);
 	stroke(100);
 
@@ -29,7 +30,11 @@ void setup() {
 }
 
 void draw() {
-
+	if (mode == CONTINUOUS_MODE) {
+		advance();
+		drawCells();
+	}
+	drawControls();
 }
 
 void drawCells() {
@@ -86,6 +91,7 @@ void keyPressed() {
 	if (key == 'g' || key == 'G') {
 		if (mode == SINGLE_STEP_MODE) {
 			mode = CONTINUOUS_MODE;
+			return;
 		}
 		else {
 			mode = SINGLE_STEP_MODE;
@@ -130,4 +136,11 @@ void advance() {
 			}
 		}
 	}
+}
+
+void drawControls() {
+	fill(0);
+	rect(NUM_HORIZONTAL_CELLS * CELL_WIDTH, 0, CONTROLS_WIDTH, NUM_VERTICAL_CELLS * CELL_HEIGHT);
+	fill(255);
+	text((mode == SINGLE_STEP_MODE ? "Single Step Mode" : "Continuous Mode"), NUM_HORIZONTAL_CELLS * CELL_WIDTH + 20, 30);
 }
