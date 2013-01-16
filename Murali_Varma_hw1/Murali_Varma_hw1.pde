@@ -16,7 +16,6 @@ boolean [][] cellState;
 int [][] neighborCount;
 int mode;
 int neighbors;
-
 Button[] buttons;
 
 //called once in the beginning
@@ -239,6 +238,7 @@ void drawControls() {
 
 }
 
+//Button class that is used plenty of times in the GUI controls
 class Button {
 	int x;
 	int y;
@@ -247,11 +247,13 @@ class Button {
 	String buttonText;
 	String hotkey = "";
 
+	//constructor for buttons with hotkeys
 	Button(int x, int y, int width, int height, String buttonText, String hotkey) {
 		this(x, y, width, height, buttonText);
 		this.hotkey = hotkey;
 	}
 
+	//constructor for buttons for patterns
 	Button(int x, int y, int width, int height, String buttonText) {
 		this.x = NUM_HORIZONTAL_CELLS * CELL_WIDTH + x;
 		this.y = y;
@@ -259,6 +261,8 @@ class Button {
 		this.height = height;
 		this.buttonText = buttonText;
 	}
+
+	//what happens when you click the button
 	void click() {
 		if (mouseX > x && mouseX < x + width && mouseY > y && mouseY < y + height) {
 			if (hotkey == "C") {
@@ -288,6 +292,7 @@ class Button {
 		}
 	}
 
+	//change color upon hovering on button
 	void hover() {
 		if (mouseX > x && mouseX < x + width && mouseY > y && mouseY < y + height) {
 			draw(100);
@@ -297,6 +302,7 @@ class Button {
 		}
 	}
 
+	//draw the actual button
 	void draw(int col) {
 		fill(col);
 		rect(x, y, width, height);
@@ -304,6 +310,7 @@ class Button {
 		text(buttonText + hotkeyify(), x + 2, y + 4, width, height);
 	}
 
+	//really, a stupid function. i am saddened that i created a function named like this -_-
 	String hotkeyify() {
 		if (hotkey == "") {
 			return "";
