@@ -44,15 +44,17 @@ public void setup() {
 	cellState = new boolean[NUM_VERTICAL_CELLS][NUM_HORIZONTAL_CELLS];	//by default all cells are inititialized to false
 	neighborCount = new int[NUM_VERTICAL_CELLS][NUM_HORIZONTAL_CELLS];	//by default all cells are inititialized to zero
 	mode = SINGLE_STEP_MODE;
-	drawGlider();
+	drawGlider(20, 20);
 	drawCells();
 
 	//GUI Stuff
-	buttons = new Button[4];
+	buttons = new Button[6];
 	buttons[0] = new Button(20, 60, 120, 20, "Clear", "C");
 	buttons[1] = new Button(20, 100, 120, 20, "Randomize", "R");
 	buttons[2] = new Button(20, 140, 120, 20, "Toggle Mode", "G");
 	buttons[3] = new Button(20, 180, 120, 20, "Step Once", "Space");
+	buttons[4] = new Button(20, 300, 60, 20, "Glider");
+	buttons[5] = new Button(20, 340, 120, 20, "Glider Gun");
 	drawControls();
 }
 
@@ -83,13 +85,6 @@ public void drawCell(int i, int j) {
 	}
 	rect (CELL_WIDTH * j, CELL_HEIGHT * i, CELL_WIDTH, CELL_HEIGHT);
 
-}
-
-//draw a simple glider
-public void drawGlider() {
-	int midX = NUM_HORIZONTAL_CELLS / 2;
-	int midY = NUM_VERTICAL_CELLS / 2;
-	cellState[midY][midX] = cellState[midY][midX + 1] = cellState[midY][midX + 2] = cellState[midY + 1][midX + 2] = cellState[midY + 2][midX + 1] = true;
 }
 
 //called when the mouse is clicked
@@ -217,12 +212,41 @@ public void advance() {
 	}
 }
 
+//COOL PATTERNS
+
+//draw generic pattern (assumes that the input is an n by 2 array)
+public void drawPattern(int[][] pattern, int x, int y) {
+	for (int i = 0; i < pattern.length; i++) {
+		cellState[y + pattern[i][1]][x + pattern[i][0]] = true;
+	}
+}
+
+//draw a simple glider
+public void drawGlider(int x, int y) {
+	int[][] glider = {
+		{0, 0},
+		{1, 0},
+		{2, 0},
+		{2, 1},
+		{1, 2}
+	};
+	drawPattern(glider, x, y);
+}
+
+//draw the simplest known glider gun that keeps producing gliders
+public void drawGliderGun(int x, int y) {
+
+}
+
+//GUI STUFF
+
 //draw the GUI controls
 public void drawControls() {
 	fill(0);
 	rect(NUM_HORIZONTAL_CELLS * CELL_WIDTH, 0, CONTROLS_WIDTH, NUM_VERTICAL_CELLS * CELL_HEIGHT);
 	fill(255);
 	text("Mode: " + (mode == SINGLE_STEP_MODE ? "Single Step" : "Continuous"), NUM_HORIZONTAL_CELLS * CELL_WIDTH + 20, 30);
+	text("Insert Patterns", NUM_HORIZONTAL_CELLS * CELL_WIDTH + 20, 280);
 	for (int i = 0; i < buttons.length; i++) {
 		buttons[i].draw(200);
 	}
@@ -236,17 +260,20 @@ class Button {
 	int width;
 	int height;
 	String buttonText;
-	String hotkey;
+	String hotkey = "";
 
 	Button(int x, int y, int width, int height, String buttonText, String hotkey) {
+		this(x, y, width, height, buttonText);
+		this.hotkey = hotkey;
+	}
+
+	Button(int x, int y, int width, int height, String buttonText) {
 		this.x = NUM_HORIZONTAL_CELLS * CELL_WIDTH + x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
 		this.buttonText = buttonText;
-		this.hotkey = hotkey;
 	}
-
 	public void click() {
 		if (mouseX > x && mouseX < x + width && mouseY > y && mouseY < y + height) {
 			if (hotkey == "C") {
@@ -262,7 +289,16 @@ class Button {
 				advanceStep();
 			}
 			else {
-				//do something else
+				//inserting patterns
+				clearGrid();
+				if (buttonText == "Glider") {
+					drawGlider(60, 60);
+				}
+				else if (buttonText == "Glider Gun") {
+					drawGliderGun(30, 30);
+				}
+
+				drawCells();
 			}
 		}
 	}
@@ -280,7 +316,14 @@ class Button {
 		fill(col);
 		rect(x, y, width, height);
 		fill(0);
-		text(buttonText + " (" + hotkey + ")", x + 2, y + 4, width, height);
+		text(buttonText + hotkeyify(), x + 2, y + 4, width, height);
+	}
+
+	public String hotkeyify() {
+		if (hotkey == "") {
+			return "";
+		}
+		return " (" + hotkey + ")";
 	}
 };
   static public void main(String[] passedArgs) {
