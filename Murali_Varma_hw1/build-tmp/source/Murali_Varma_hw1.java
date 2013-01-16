@@ -41,7 +41,9 @@ public void setup() {
 	cellState = new boolean[NUM_VERTICAL_CELLS][NUM_HORIZONTAL_CELLS];	//by default all cells are inititialized to false
 	neighborCount = new int[NUM_VERTICAL_CELLS][NUM_HORIZONTAL_CELLS];	//by default all cells are inititialized to zero
 	mode = SINGLE_STEP_MODE;
+	drawGlider();
 	drawCells();
+	drawControls();
 }
 
 public void draw() {
@@ -49,7 +51,6 @@ public void draw() {
 		advance();
 		drawCells();
 	}
-	drawControls();
 }
 
 public void drawCells() {
@@ -69,6 +70,12 @@ public void drawCell(int i, int j) {
 	}
 	rect (CELL_WIDTH * j, CELL_HEIGHT * i, CELL_WIDTH, CELL_HEIGHT);
 
+}
+
+public void drawGlider() {
+	int midX = NUM_HORIZONTAL_CELLS / 2;
+	int midY = NUM_VERTICAL_CELLS / 2;
+	cellState[midY][midX] = cellState[midY][midX + 1] = cellState[midY][midX + 2] = cellState[midY + 1][midX + 2] = cellState[midY + 2][midX + 1] = true;
 }
 
 public void mousePressed() {
@@ -106,17 +113,19 @@ public void keyPressed() {
 	if (key == 'g' || key == 'G') {
 		if (mode == SINGLE_STEP_MODE) {
 			mode = CONTINUOUS_MODE;
-			return;
 		}
 		else {
 			mode = SINGLE_STEP_MODE;
 		}
+		drawControls();
+		return;
 	}
 
 	//advance step
 	if (key == ' ') {
 		mode = SINGLE_STEP_MODE;
 		advance();
+		drawControls();
 	}
 	drawCells();
 }

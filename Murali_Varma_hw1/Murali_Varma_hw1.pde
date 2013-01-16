@@ -17,6 +17,7 @@ int [][] neighborCount;
 int mode;
 int neighbors;
 
+//called once in the beginning
 void setup() {
 	size(NUM_HORIZONTAL_CELLS * CELL_WIDTH + CONTROLS_WIDTH, NUM_VERTICAL_CELLS * CELL_HEIGHT);
 	background(0);
@@ -26,17 +27,20 @@ void setup() {
 	cellState = new boolean[NUM_VERTICAL_CELLS][NUM_HORIZONTAL_CELLS];	//by default all cells are inititialized to false
 	neighborCount = new int[NUM_VERTICAL_CELLS][NUM_HORIZONTAL_CELLS];	//by default all cells are inititialized to zero
 	mode = SINGLE_STEP_MODE;
+	drawGlider();
 	drawCells();
+	drawControls();
 }
 
+//called every draw cycle
 void draw() {
 	if (mode == CONTINUOUS_MODE) {
 		advance();
 		drawCells();
 	}
-	drawControls();
 }
 
+//redraws all the cells based on cell data structure
 void drawCells() {
 	for (int i = 0; i < NUM_VERTICAL_CELLS; i++) {
 		for (int j = 0; j < NUM_HORIZONTAL_CELLS; j++) {
@@ -45,6 +49,7 @@ void drawCells() {
 	}
 }
 
+//draw a single cell
 void drawCell(int i, int j) {
 	if (cellState[i][j]) {
 		fill(255);
@@ -56,6 +61,14 @@ void drawCell(int i, int j) {
 
 }
 
+//draw a simple glider
+void drawGlider() {
+	int midX = NUM_HORIZONTAL_CELLS / 2;
+	int midY = NUM_VERTICAL_CELLS / 2;
+	cellState[midY][midX] = cellState[midY][midX + 1] = cellState[midY][midX + 2] = cellState[midY + 1][midX + 2] = cellState[midY + 2][midX + 1] = true;
+}
+
+//called when the mouse is clicked
 void mousePressed() {
 	if (mode != SINGLE_STEP_MODE) {
 		//mouse clicks have effect only in single step mode
@@ -67,6 +80,7 @@ void mousePressed() {
 	drawCell(yCell, xCell);
 }
 
+//called when some key is pressed
 void keyPressed() {
 	//clear grid
 	if (key == 'C' || key == 'c') {
@@ -91,22 +105,26 @@ void keyPressed() {
 	if (key == 'g' || key == 'G') {
 		if (mode == SINGLE_STEP_MODE) {
 			mode = CONTINUOUS_MODE;
-			return;
 		}
 		else {
 			mode = SINGLE_STEP_MODE;
 		}
+		drawControls();
+		return;
 	}
 
 	//advance step
 	if (key == ' ') {
 		mode = SINGLE_STEP_MODE;
 		advance();
+		drawControls();
 	}
 	drawCells();
 }
 
+//change to single step mode and advance by one timestep
 void advance() {
+	//calculate live neighbor counts for each cell
 	for (int i = 0; i < NUM_VERTICAL_CELLS; i++) {
 		for (int j = 0; j < NUM_HORIZONTAL_CELLS; j++) {
 			neighbors = 0;
@@ -126,6 +144,7 @@ void advance() {
 		}
 	}
 
+	//update cell state based on neightbor count
 	for (int i = 0; i < NUM_VERTICAL_CELLS; i++) {
 		for (int j = 0; j < NUM_HORIZONTAL_CELLS; j++) {
 			if (cellState[i][j] && neighborCount[i][j] != 2 && neighborCount[i][j] != 3) {
@@ -138,6 +157,7 @@ void advance() {
 	}
 }
 
+//draw the GUI controls
 void drawControls() {
 	fill(0);
 	rect(NUM_HORIZONTAL_CELLS * CELL_WIDTH, 0, CONTROLS_WIDTH, NUM_VERTICAL_CELLS * CELL_HEIGHT);
