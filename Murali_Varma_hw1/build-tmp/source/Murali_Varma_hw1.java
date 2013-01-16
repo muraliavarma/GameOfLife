@@ -32,6 +32,9 @@ int [][] neighborCount;
 int mode;
 int neighbors;
 
+Button[] buttons;
+
+//called once in the beginning
 public void setup() {
 	size(NUM_HORIZONTAL_CELLS * CELL_WIDTH + CONTROLS_WIDTH, NUM_VERTICAL_CELLS * CELL_HEIGHT);
 	background(0);
@@ -43,9 +46,17 @@ public void setup() {
 	mode = SINGLE_STEP_MODE;
 	drawGlider();
 	drawCells();
+
+	//GUI Stuff
+	buttons = new Button[4];
+	buttons[0] = new Button(20, 60, 100, 20, "Clear", "C");
+	buttons[1] = new Button(20, 100, 100, 20, "Randomize", "R");
+	buttons[2] = new Button(20, 140, 100, 20, "Toggle", "G");
+	buttons[3] = new Button(20, 180, 100, 20, "Step", "Space");
 	drawControls();
 }
 
+//called every draw cycle
 public void draw() {
 	if (mode == CONTINUOUS_MODE) {
 		advance();
@@ -53,6 +64,7 @@ public void draw() {
 	}
 }
 
+//redraws all the cells based on cell data structure
 public void drawCells() {
 	for (int i = 0; i < NUM_VERTICAL_CELLS; i++) {
 		for (int j = 0; j < NUM_HORIZONTAL_CELLS; j++) {
@@ -61,6 +73,7 @@ public void drawCells() {
 	}
 }
 
+//draw a single cell
 public void drawCell(int i, int j) {
 	if (cellState[i][j]) {
 		fill(255);
@@ -72,71 +85,111 @@ public void drawCell(int i, int j) {
 
 }
 
+//draw a simple glider
 public void drawGlider() {
 	int midX = NUM_HORIZONTAL_CELLS / 2;
 	int midY = NUM_VERTICAL_CELLS / 2;
 	cellState[midY][midX] = cellState[midY][midX + 1] = cellState[midY][midX + 2] = cellState[midY + 1][midX + 2] = cellState[midY + 2][midX + 1] = true;
 }
 
+//called when the mouse is clicked
 public void mousePressed() {
+	int xCell = mouseX/CELL_WIDTH;
+	int yCell = mouseY/CELL_HEIGHT;
+
+	if (xCell >= NUM_HORIZONTAL_CELLS) {
+		//find which control the click happened on
+		for (int i = 0; i < buttons.length; i++) {
+			buttons[i].click();
+		}
+		return;
+	}
+
 	if (mode != SINGLE_STEP_MODE) {
 		//mouse clicks have effect only in single step mode
 		return;
 	}
-	int xCell = mouseX/CELL_WIDTH;
-	int yCell = mouseY/CELL_HEIGHT;
 	cellState[yCell][xCell] = !cellState[yCell][xCell];
 	drawCell(yCell, xCell);
 }
 
+//called when the mouse is hovered
+public void mouseMoved() {
+	if (mouseX/CELL_WIDTH >= NUM_HORIZONTAL_CELLS) {
+		//find which control the mouse is hovered on
+		for (int i = 0; i < buttons.length; i++) {
+			buttons[i].hover();
+		}
+	}
+}
+
+//called when some key is pressed
 public void keyPressed() {
 	//clear grid
 	if (key == 'C' || key == 'c') {
-		for (int i = 0; i < NUM_VERTICAL_CELLS; i++) {
-			for (int j = 0; j < NUM_HORIZONTAL_CELLS; j++) {
-				cellState[i][j] = false;
-			}
-		}
+		clearGrid();
 	}
 
 	//randomize grid
 	if (key == 'R' || key == 'r') {
-		for (int i = 0; i < NUM_VERTICAL_CELLS; i++) {
-			for (int j = 0; j < NUM_HORIZONTAL_CELLS; j++) {
-				//random(2) gives a float between 0 and 2
-				cellState[i][j] = (random(2) >= 1);
-			}
-		}
+		randomizeGrid();
 	}
 
 	//change mode
 	if (key == 'g' || key == 'G') {
-		if (mode == SINGLE_STEP_MODE) {
-			mode = CONTINUOUS_MODE;
-		}
-		else {
-			mode = SINGLE_STEP_MODE;
-		}
-		drawControls();
+		changeMode();
 		return;
 	}
 
 	//advance step
 	if (key == ' ') {
-		mode = SINGLE_STEP_MODE;
-		advance();
-		drawControls();
+		advanceStep();
 	}
 	drawCells();
 }
 
+public void clearGrid() {
+	for (int i = 0; i < NUM_VERTICAL_CELLS; i++) {
+		for (int j = 0; j < NUM_HORIZONTAL_CELLS; j++) {
+			cellState[i][j] = false;
+		}
+	}
+}
+
+public void randomizeGrid() {
+	for (int i = 0; i < NUM_VERTICAL_CELLS; i++) {
+		for (int j = 0; j < NUM_HORIZONTAL_CELLS; j++) {
+			//random(2) gives a float between 0 and 2
+			cellState[i][j] = (random(2) >= 1);
+		}
+	}
+}
+
+public void changeMode() {
+	if (mode == SINGLE_STEP_MODE) {
+		mode = CONTINUOUS_MODE;
+	}
+	else {
+		mode = SINGLE_STEP_MODE;
+	}
+	drawControls();
+}
+
+public void advanceStep() {
+	mode = SINGLE_STEP_MODE;
+	advance();
+	drawControls();
+}
+
+//change to single step mode and advance by one timestep
 public void advance() {
+	//calculate live neighbor counts for each cell
 	for (int i = 0; i < NUM_VERTICAL_CELLS; i++) {
 		for (int j = 0; j < NUM_HORIZONTAL_CELLS; j++) {
 			neighbors = 0;
 			for (int ii = -1; ii <= 1; ii++) {
 				for (int jj = -1; jj <= 1; jj++) {
-					if ( ii == 0 && jj == 0) {
+					if (ii == 0 && jj == 0) {
 						continue;
 					}
 					int newX = (j + jj + NUM_HORIZONTAL_CELLS) % NUM_HORIZONTAL_CELLS;
@@ -150,6 +203,7 @@ public void advance() {
 		}
 	}
 
+	//update cell state based on neightbor count
 	for (int i = 0; i < NUM_VERTICAL_CELLS; i++) {
 		for (int j = 0; j < NUM_HORIZONTAL_CELLS; j++) {
 			if (cellState[i][j] && neighborCount[i][j] != 2 && neighborCount[i][j] != 3) {
@@ -162,12 +216,56 @@ public void advance() {
 	}
 }
 
+//draw the GUI controls
 public void drawControls() {
 	fill(0);
 	rect(NUM_HORIZONTAL_CELLS * CELL_WIDTH, 0, CONTROLS_WIDTH, NUM_VERTICAL_CELLS * CELL_HEIGHT);
 	fill(255);
-	text((mode == SINGLE_STEP_MODE ? "Single Step Mode" : "Continuous Mode"), NUM_HORIZONTAL_CELLS * CELL_WIDTH + 20, 30);
+	text("Mode: " + (mode == SINGLE_STEP_MODE ? "Single Step" : "Continuous"), NUM_HORIZONTAL_CELLS * CELL_WIDTH + 20, 30);
+	for (int i = 0; i < buttons.length; i++) {
+		buttons[i].draw(200);
+	}
 }
+
+class Button {
+	int x;
+	int y;
+	int width;
+	int height;
+	String buttonText;
+	String hotkey;
+
+	Button(int x, int y, int width, int height, String buttonText, String hotkey) {
+		this.x = NUM_HORIZONTAL_CELLS * CELL_WIDTH + x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+		this.buttonText = buttonText;
+		this.hotkey = hotkey;
+	}
+
+	public void click() {
+		if (mouseX > x && mouseX < x + width && mouseY > y && mouseY < y + height) {
+			print (buttonText + hotkey);
+		}
+	}
+
+	public void hover() {
+		if (mouseX > x && mouseX < x + width && mouseY > y && mouseY < y + height) {
+			draw(100);
+		}
+		else {
+			draw(200);
+		}
+	}
+
+	public void draw(int col) {
+		fill(col);
+		rect(x, y, width, height);
+		fill(0);
+		text(buttonText + "(" + hotkey + ")", x + 2, y + 2, width, height);
+	}
+};
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "Murali_Varma_hw1" };
     if (passedArgs != null) {
