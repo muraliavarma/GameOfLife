@@ -31,7 +31,6 @@ boolean [][] cellState;
 int [][] neighborCount;
 int mode;
 int neighbors;
-
 Button[] buttons;
 
 //called once in the beginning
@@ -53,7 +52,7 @@ public void setup() {
 	buttons[1] = new Button(20, 100, 120, 20, "Randomize", "R");
 	buttons[2] = new Button(20, 140, 120, 20, "Toggle Mode", "G");
 	buttons[3] = new Button(20, 180, 120, 20, "Step Once", "Space");
-	buttons[4] = new Button(20, 300, 60, 20, "Glider");
+	buttons[4] = new Button(20, 300, 60, 20, "Gliders");
 	buttons[5] = new Button(20, 340, 120, 20, "Glider Gun");
 	drawControls();
 }
@@ -224,18 +223,29 @@ public void drawPattern(int[][] pattern, int x, int y) {
 //draw a simple glider
 public void drawGlider(int x, int y) {
 	int[][] glider = {
-		{0, 0},
-		{1, 0},
-		{2, 0},
-		{2, 1},
-		{1, 2}
+		{0, 0},	{1, 0},	{2, 0},	{2, 1},	{1, 2}
 	};
 	drawPattern(glider, x, y);
 }
 
 //draw the simplest known glider gun that keeps producing gliders
 public void drawGliderGun(int x, int y) {
+	int[][] gun = {
+		{1, 5},	{1, 6},	{2, 5},	{2, 6},	{11, 5}, {11, 6}, {11, 7}, {12, 4},
+		{12, 8}, {13, 3}, {13, 9}, {14, 3}, {14, 9}, {15, 6}, {16, 4}, {16, 8},
+		{17, 5}, {17, 6}, {17, 7}, {18, 6}, {21, 3}, {21, 4}, {21, 5}, {22, 3},
+		{22, 4}, {22, 5}, {23, 2}, {23, 6},	{25, 1}, {25, 2}, {25, 6}, {25, 7},
+		{35, 3}, {35, 4}, {36, 3}, {36, 4}
+	};
+	drawPattern(gun, x, y);
+}
 
+//draw an LWSS spaceship
+public void drawLWSS(int x, int y) {
+	int[][] lwss = {
+		{0, 0},	{0, 2},	{1, 3},	{2, 3},	{3, 0}, {3, 3}, {4, 1}, {4, 2}, {4, 3}
+	};
+	drawPattern(lwss, x, y);	
 }
 
 //GUI STUFF
@@ -254,6 +264,7 @@ public void drawControls() {
 
 }
 
+//Button class that is used plenty of times in the GUI controls
 class Button {
 	int x;
 	int y;
@@ -262,11 +273,13 @@ class Button {
 	String buttonText;
 	String hotkey = "";
 
+	//constructor for buttons with hotkeys
 	Button(int x, int y, int width, int height, String buttonText, String hotkey) {
 		this(x, y, width, height, buttonText);
 		this.hotkey = hotkey;
 	}
 
+	//constructor for buttons for patterns
 	Button(int x, int y, int width, int height, String buttonText) {
 		this.x = NUM_HORIZONTAL_CELLS * CELL_WIDTH + x;
 		this.y = y;
@@ -274,6 +287,8 @@ class Button {
 		this.height = height;
 		this.buttonText = buttonText;
 	}
+
+	//what happens when you click the button
 	public void click() {
 		if (mouseX > x && mouseX < x + width && mouseY > y && mouseY < y + height) {
 			if (hotkey == "C") {
@@ -291,8 +306,11 @@ class Button {
 			else {
 				//inserting patterns
 				clearGrid();
-				if (buttonText == "Glider") {
-					drawGlider(60, 60);
+				if (buttonText == "Gliders") {
+					drawGlider(30, 30);
+					drawGlider(40, 40);
+					drawLWSS(50, 50);
+					drawLWSS(60, 60);
 				}
 				else if (buttonText == "Glider Gun") {
 					drawGliderGun(30, 30);
@@ -303,6 +321,7 @@ class Button {
 		}
 	}
 
+	//change color upon hovering on button
 	public void hover() {
 		if (mouseX > x && mouseX < x + width && mouseY > y && mouseY < y + height) {
 			draw(100);
@@ -312,6 +331,7 @@ class Button {
 		}
 	}
 
+	//draw the actual button
 	public void draw(int col) {
 		fill(col);
 		rect(x, y, width, height);
@@ -319,6 +339,7 @@ class Button {
 		text(buttonText + hotkeyify(), x + 2, y + 4, width, height);
 	}
 
+	//really, a stupid function. i am saddened that i created a function named like this -_-
 	public String hotkeyify() {
 		if (hotkey == "") {
 			return "";
