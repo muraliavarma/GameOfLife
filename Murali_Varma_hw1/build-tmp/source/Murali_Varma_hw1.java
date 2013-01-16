@@ -49,10 +49,10 @@ public void setup() {
 
 	//GUI Stuff
 	buttons = new Button[4];
-	buttons[0] = new Button(20, 60, 100, 20, "Clear", "C");
-	buttons[1] = new Button(20, 100, 100, 20, "Randomize", "R");
-	buttons[2] = new Button(20, 140, 100, 20, "Toggle", "G");
-	buttons[3] = new Button(20, 180, 100, 20, "Step", "Space");
+	buttons[0] = new Button(20, 60, 120, 20, "Clear", "C");
+	buttons[1] = new Button(20, 100, 120, 20, "Randomize", "R");
+	buttons[2] = new Button(20, 140, 120, 20, "Toggle Mode", "G");
+	buttons[3] = new Button(20, 180, 120, 20, "Step Once", "Space");
 	drawControls();
 }
 
@@ -138,14 +138,12 @@ public void keyPressed() {
 	//change mode
 	if (key == 'g' || key == 'G') {
 		changeMode();
-		return;
 	}
 
 	//advance step
 	if (key == ' ') {
 		advanceStep();
 	}
-	drawCells();
 }
 
 public void clearGrid() {
@@ -154,6 +152,7 @@ public void clearGrid() {
 			cellState[i][j] = false;
 		}
 	}
+	drawCells();
 }
 
 public void randomizeGrid() {
@@ -163,6 +162,7 @@ public void randomizeGrid() {
 			cellState[i][j] = (random(2) >= 1);
 		}
 	}
+	drawCells();
 }
 
 public void changeMode() {
@@ -179,6 +179,7 @@ public void advanceStep() {
 	mode = SINGLE_STEP_MODE;
 	advance();
 	drawControls();
+	drawCells();
 }
 
 //change to single step mode and advance by one timestep
@@ -225,6 +226,8 @@ public void drawControls() {
 	for (int i = 0; i < buttons.length; i++) {
 		buttons[i].draw(200);
 	}
+	line(NUM_HORIZONTAL_CELLS * CELL_WIDTH, 250, NUM_HORIZONTAL_CELLS * CELL_WIDTH + CONTROLS_WIDTH, 250);
+
 }
 
 class Button {
@@ -246,7 +249,21 @@ class Button {
 
 	public void click() {
 		if (mouseX > x && mouseX < x + width && mouseY > y && mouseY < y + height) {
-			print (buttonText + hotkey);
+			if (hotkey == "C") {
+				clearGrid();
+			}
+			else if (hotkey == "R") {
+				randomizeGrid();
+			}
+			else if (hotkey == "G") {
+				changeMode();
+			}
+			else if (hotkey == "Space") {
+				advanceStep();
+			}
+			else {
+				//do something else
+			}
 		}
 	}
 
@@ -263,7 +280,7 @@ class Button {
 		fill(col);
 		rect(x, y, width, height);
 		fill(0);
-		text(buttonText + "(" + hotkey + ")", x + 2, y + 2, width, height);
+		text(buttonText + " (" + hotkey + ")", x + 2, y + 4, width, height);
 	}
 };
   static public void main(String[] passedArgs) {
