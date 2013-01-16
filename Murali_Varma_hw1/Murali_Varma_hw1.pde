@@ -28,17 +28,18 @@ void setup() {
 	cellState = new boolean[NUM_VERTICAL_CELLS][NUM_HORIZONTAL_CELLS];	//by default all cells are inititialized to false
 	neighborCount = new int[NUM_VERTICAL_CELLS][NUM_HORIZONTAL_CELLS];	//by default all cells are inititialized to zero
 	mode = SINGLE_STEP_MODE;
-	drawGlider(20, 20);
+	drawGliderGun(20, 20);
 	drawCells();
 
 	//GUI Stuff
-	buttons = new Button[6];
+	buttons = new Button[7];
 	buttons[0] = new Button(20, 60, 120, 20, "Clear", "C");
 	buttons[1] = new Button(20, 100, 120, 20, "Randomize", "R");
 	buttons[2] = new Button(20, 140, 120, 20, "Toggle Mode", "G");
 	buttons[3] = new Button(20, 180, 120, 20, "Step Once", "Space");
 	buttons[4] = new Button(20, 300, 60, 20, "Gliders");
-	buttons[5] = new Button(20, 340, 120, 20, "Glider Gun");
+	buttons[5] = new Button(20, 340, 120, 20, "Gosper Glider Gun");
+	buttons[6] = new Button(20, 380, 80, 20, "Oscillators");
 	drawControls();
 }
 
@@ -297,8 +298,9 @@ class Button {
 					drawLWSS(50, 50);
 					drawLWSS(60, 60);
 				}
-				else if (buttonText == "Glider Gun") {
+				else if (buttonText == "Gosper Glider Gun") {
 					drawGliderGun(30, 30);
+					drawGliderGun(30, 60);
 				}
 
 				drawCells();
