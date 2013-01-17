@@ -262,6 +262,19 @@ public void drawOscillator2(int x, int y) {
 	drawPattern(pattern, x, y);
 }
 
+//draw an oscillator
+public void drawOscillator3(int x, int y) {
+	int[][] pattern = {
+		{0, 0}, {0, 1}, {1, 0}, {1, 1}, {0, 17}, {0, 18}, {1, 17}, {1, 18},
+		{26, 0}, {26, 1}, {27, 0}, {27, 1}, {26, 17}, {26, 18}, {27, 17}, {27, 18},
+		{7, 3}, {8, 2}, {8, 4}, {9, 2}, {9, 4}, {10, 3},
+		{17, 15}, {18, 14}, {18, 16}, {19, 14}, {19, 16}, {20, 15},
+		{12, 6}, {12, 7}, {12, 8}, {13, 6}, {13, 8}, {13, 9}, {13, 10}, {13, 11}, {13, 12},
+		{14, 6}, {14, 7}, {14, 8}, {14, 9}, {14, 10}, {14, 12}, {15, 10}, {15, 11}, {15, 12}
+	};
+	drawPattern(pattern, x, y);
+}
+
 //draw an LWSS spaceship
 public void drawLWSS(int x, int y) {
 	int[][] lwss = {
@@ -339,8 +352,12 @@ class Button {
 					drawGliderGun(30, 60);
 				}
 				else if (buttonText == "Oscillators") {
-					drawOscillator1(30, 30);
-					drawOscillator2(30, 50);
+					drawOscillator1(10, 10);
+					drawOscillator1(50, 10);
+					drawOscillator2(10, 30);
+					drawOscillator2(50, 30);
+					drawOscillator3(10, 60);
+					drawOscillator3(50, 60);
 				}
 
 				drawCells();
@@ -366,7 +383,7 @@ class Button {
 		text(buttonText + hotkeyify(), x + 2, y + 4, width, height);
 	}
 
-	//really, a stupid function. i am saddened that i created a function named like this -_-
+	//stringifies the hotkey that needs to be displayed inside the button
 	public String hotkeyify() {
 		if (hotkey == "") {
 			return "";
