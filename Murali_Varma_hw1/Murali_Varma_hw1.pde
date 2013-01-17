@@ -226,6 +226,16 @@ void drawGliderGun(int x, int y) {
 	drawPattern(gun, x, y);
 }
 
+//draw an oscillator
+void drawOscillator(int x, int y) {
+	int[][] pattern = {
+		{0, 3},	{0, 4},	{1, 3},	{1, 4},	{11, 2}, {11, 2}, {11, 3}, {11, 4},
+		{12, 1}, {12, 5}, {13, 0}, {13, 6}, {14, 1}, {14, 5}, {15, 2},
+		{15, 3}, {15, 4}, {16, 2}, {16, 3}, {16, 4}, {20, 3}, {20, 4}, {21, 3}, {21, 4}
+	};
+	drawPattern(pattern, x, y);
+}
+
 //draw an LWSS spaceship
 void drawLWSS(int x, int y) {
 	int[][] lwss = {
@@ -301,6 +311,9 @@ class Button {
 				else if (buttonText == "Gosper Glider Gun") {
 					drawGliderGun(30, 30);
 					drawGliderGun(30, 60);
+				}
+				else if (buttonText == "Oscillators") {
+					drawOscillator(30, 30);
 				}
 
 				drawCells();
