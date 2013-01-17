@@ -290,12 +290,15 @@ public void drawControls() {
 	rect(NUM_HORIZONTAL_CELLS * CELL_WIDTH, 0, CONTROLS_WIDTH, NUM_VERTICAL_CELLS * CELL_HEIGHT);
 	fill(255);
 	text("Mode: " + (mode == SINGLE_STEP_MODE ? "Single Step" : "Continuous"), NUM_HORIZONTAL_CELLS * CELL_WIDTH + 20, 30);
-	text("Insert Patterns", NUM_HORIZONTAL_CELLS * CELL_WIDTH + 20, 280);
+	text("Insert Patterns:", NUM_HORIZONTAL_CELLS * CELL_WIDTH + 20, 280);
+	text("Click above buttons for various actions", NUM_HORIZONTAL_CELLS * CELL_WIDTH + 20, 460, CONTROLS_WIDTH - 40, 100);
+	text("Developed by Murali Varma", NUM_HORIZONTAL_CELLS * CELL_WIDTH + 20, NUM_VERTICAL_CELLS * CELL_HEIGHT - 60, CONTROLS_WIDTH - 20, 20);
+	text("github.com/muraliavarma/ GameOfLife", NUM_HORIZONTAL_CELLS * CELL_WIDTH + 20, NUM_VERTICAL_CELLS * CELL_HEIGHT - 40, CONTROLS_WIDTH - 20, 40);
 	for (int i = 0; i < buttons.length; i++) {
 		buttons[i].draw(200);
 	}
 	line(NUM_HORIZONTAL_CELLS * CELL_WIDTH, 250, NUM_HORIZONTAL_CELLS * CELL_WIDTH + CONTROLS_WIDTH, 250);
-
+	line(NUM_HORIZONTAL_CELLS * CELL_WIDTH, 450, NUM_HORIZONTAL_CELLS * CELL_WIDTH + CONTROLS_WIDTH, 450);
 }
 
 //Button class that is used plenty of times in the GUI controls
