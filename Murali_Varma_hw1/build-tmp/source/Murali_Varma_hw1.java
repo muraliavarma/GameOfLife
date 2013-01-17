@@ -101,8 +101,7 @@ public void mousePressed() {
 	}
 
 	if (mode != SINGLE_STEP_MODE) {
-		//mouse clicks have effect only in single step mode
-		return;
+		changeMode();
 	}
 	cellState[yCell][xCell] = !cellState[yCell][xCell];
 	drawCell(yCell, xCell);
@@ -342,10 +341,14 @@ class Button {
 				//inserting patterns
 				clearGrid();
 				if (buttonText == "Gliders") {
+					drawGlider(10, 10);
+					drawGlider(20, 20);
 					drawGlider(30, 30);
 					drawGlider(40, 40);
-					drawLWSS(50, 50);
-					drawLWSS(60, 60);
+					drawLWSS(60, 50);
+					drawLWSS(70, 50);
+					drawLWSS(70, 60);
+					drawLWSS(80, 60);
 				}
 				else if (buttonText == "Gosper Glider Gun") {
 					drawGliderGun(30, 30);
